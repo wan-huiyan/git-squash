@@ -1,0 +1,9 @@
+{
+  "name": "git-squash",
+  "description": "Smart git commit squashing with auto-detection of trivial commits via message, diff, and timing heuristics",
+  "version": "1.0.0",
+  "author": { "name": "Huiyan Wan" },
+  "repository": "https://github.com/wan-huiyan/git-squash",
+  "license": "MIT",
+  "keywords": ["git", "squash", "commit", "history", "cleanup"]
+}
