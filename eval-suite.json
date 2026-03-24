@@ -1,0 +1,428 @@
+{
+  "skill_name": "git-squash",
+  "version": "1.0.0",
+  "created_by": "schliff",
+  "triggers": [
+    {
+      "id": "pos-1",
+      "prompt": "squash the last 3 commits into one",
+      "should_trigger": true,
+      "category": "positive",
+      "notes": "Direct squash N command"
+    },
+    {
+      "id": "pos-2",
+      "prompt": "/squash",
+      "should_trigger": true,
+      "category": "positive",
+      "notes": "Slash command invocation"
+    },
+    {
+      "id": "pos-3",
+      "prompt": "amend the last commit with these staged changes",
+      "should_trigger": true,
+      "category": "positive",
+      "notes": "Amend mode trigger"
+    },
+    {
+      "id": "pos-4",
+      "prompt": "can you combine the last few commits? they're all related",
+      "should_trigger": true,
+      "category": "positive",
+      "notes": "Natural language combine commits"
+    },
+    {
+      "id": "pos-5",
+      "prompt": "fold that trivial fix into the previous commit",
+      "should_trigger": true,
+      "category": "positive",
+      "notes": "Fold into previous commit phrasing"
+    },
+    {
+      "id": "pos-6",
+      "prompt": "clean up the commit history before we push",
+      "should_trigger": true,
+      "category": "positive",
+      "notes": "Clean up commits natural language"
+    },
+    {
+      "id": "pos-7",
+      "prompt": "too many small commits, can you merge them together?",
+      "should_trigger": true,
+      "category": "positive",
+      "notes": "Too many small commits complaint"
+    },
+    {
+      "id": "pos-8",
+      "prompt": "that commit was trivial, just squash it",
+      "should_trigger": true,
+      "category": "positive",
+      "notes": "Trivial commit squash request"
+    },
+    {
+      "id": "pos-9",
+      "prompt": "squash before pushing to the PR",
+      "should_trigger": true,
+      "category": "positive",
+      "notes": "Squash before push workflow"
+    },
+    {
+      "id": "pos-10",
+      "prompt": "/squash 5",
+      "should_trigger": true,
+      "category": "positive",
+      "notes": "Slash command with count argument"
+    },
+    {
+      "id": "pos-11",
+      "prompt": "I made a typo fix, just amend it into the last commit",
+      "should_trigger": true,
+      "category": "positive",
+      "notes": "Amend typo fix into last commit"
+    },
+    {
+      "id": "pos-12",
+      "prompt": "collapse these WIP commits into a single clean commit",
+      "should_trigger": true,
+      "category": "positive",
+      "notes": "Collapse/WIP phrasing"
+    },
+    {
+      "id": "pos-13",
+      "prompt": "the last 3 commits are all fixups, condense them",
+      "should_trigger": true,
+      "category": "positive",
+      "notes": "Fixup condense request"
+    },
+    {
+      "id": "pos-14",
+      "prompt": "/squash amend",
+      "should_trigger": true,
+      "category": "positive",
+      "notes": "Slash command amend subcommand"
+    },
+    {
+      "id": "pos-15",
+      "prompt": "merge my last two commits into one with a better message",
+      "should_trigger": true,
+      "category": "positive",
+      "notes": "Merge commits with new message"
+    },
+    {
+      "id": "neg-1",
+      "prompt": "commit these changes with the message 'fix login bug'",
+      "should_trigger": false,
+      "category": "negative",
+      "notes": "Regular commit, not squash"
+    },
+    {
+      "id": "neg-2",
+      "prompt": "push my branch to origin",
+      "should_trigger": false,
+      "category": "negative",
+      "notes": "Git push, not squash"
+    },
+    {
+      "id": "neg-3",
+      "prompt": "create a new feature branch called auth-refactor",
+      "should_trigger": false,
+      "category": "negative",
+      "notes": "Branch creation"
+    },
+    {
+      "id": "neg-4",
+      "prompt": "rebase my branch onto main",
+      "should_trigger": false,
+      "category": "negative",
+      "notes": "Rebase without squash context"
+    },
+    {
+      "id": "neg-5",
+      "prompt": "review this pull request and leave comments",
+      "should_trigger": false,
+      "category": "negative",
+      "notes": "Code review, not git history"
+    },
+    {
+      "id": "neg-6",
+      "prompt": "show me the git log for the last week",
+      "should_trigger": false,
+      "category": "negative",
+      "notes": "Viewing log, not modifying history"
+    },
+    {
+      "id": "neg-7",
+      "prompt": "cherry-pick commit abc123 onto this branch",
+      "should_trigger": false,
+      "category": "negative",
+      "notes": "Cherry-pick is not squash"
+    },
+    {
+      "id": "neg-8",
+      "prompt": "resolve the merge conflicts in src/app.ts",
+      "should_trigger": false,
+      "category": "negative",
+      "notes": "Merge conflict resolution"
+    },
+    {
+      "id": "neg-9",
+      "prompt": "set up git hooks for pre-commit linting",
+      "should_trigger": false,
+      "category": "negative",
+      "notes": "Git hooks setup, unrelated"
+    },
+    {
+      "id": "neg-10",
+      "prompt": "revert the last commit",
+      "should_trigger": false,
+      "category": "negative",
+      "notes": "Revert is not squash"
+    },
+    {
+      "id": "neg-11",
+      "prompt": "stash my current changes",
+      "should_trigger": false,
+      "category": "negative",
+      "notes": "Git stash, not squash"
+    },
+    {
+      "id": "neg-12",
+      "prompt": "tag this release as v2.1.0",
+      "should_trigger": false,
+      "category": "negative",
+      "notes": "Git tagging"
+    },
+    {
+      "id": "edge-1",
+      "prompt": "squash",
+      "should_trigger": true,
+      "category": "edge_case",
+      "notes": "Minimal input - single word trigger"
+    },
+    {
+      "id": "edge-2",
+      "prompt": "I need to clean up my git history but I'm not sure how many commits to combine",
+      "should_trigger": true,
+      "category": "edge_case",
+      "notes": "Vague request that implies squash auto-detect"
+    },
+    {
+      "id": "edge-3",
+      "prompt": "squash the commits but they've already been pushed",
+      "should_trigger": true,
+      "category": "edge_case",
+      "notes": "Squash with force-push safety concern"
+    },
+    {
+      "id": "edge-4",
+      "prompt": "can you merge these branches together?",
+      "should_trigger": false,
+      "category": "edge_case",
+      "notes": "Merge branches (not commits) - should NOT trigger"
+    },
+    {
+      "id": "edge-5",
+      "prompt": "squash 50 commits into one",
+      "should_trigger": true,
+      "category": "edge_case",
+      "notes": "Large N squash - should trigger with warning"
+    },
+    {
+      "id": "edge-6",
+      "prompt": "interactive rebase to clean up commits",
+      "should_trigger": true,
+      "category": "edge_case",
+      "notes": "Interactive rebase for commit cleanup implies squash"
+    },
+    {
+      "id": "edge-7",
+      "prompt": "fixup! add missing import",
+      "should_trigger": false,
+      "category": "edge_case",
+      "notes": "Fixup commit message, not a squash request"
+    },
+    {
+      "id": "edge-8",
+      "prompt": "compress my commit history on this feature branch",
+      "should_trigger": true,
+      "category": "edge_case",
+      "notes": "Compress as synonym for squash"
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "tc-1",
+      "prompt": "squash the last 3 commits",
+      "input_files": [],
+      "assertions": [
+        {
+          "type": "contains",
+          "value": "git log",
+          "description": "Shows recent commits before squashing"
+        },
+        {
+          "type": "contains",
+          "value": "git reset --soft",
+          "description": "Uses soft reset for squash"
+        },
+        {
+          "type": "pattern",
+          "value": "confirm|sure|proceed",
+          "description": "Asks for confirmation before destructive operation"
+        }
+      ]
+    },
+    {
+      "id": "tc-2",
+      "prompt": "/squash amend",
+      "input_files": [],
+      "assertions": [
+        {
+          "type": "contains",
+          "value": "git status",
+          "description": "Checks for staged changes"
+        },
+        {
+          "type": "contains",
+          "value": "git commit --amend",
+          "description": "Uses amend mode"
+        }
+      ]
+    },
+    {
+      "id": "tc-3",
+      "prompt": "clean up the commit history before we push",
+      "input_files": [],
+      "assertions": [
+        {
+          "type": "contains",
+          "value": "git log",
+          "description": "Shows recent commits for auto-detect"
+        },
+        {
+          "type": "pattern",
+          "value": "score|squashable|suggest",
+          "description": "Runs squash detection heuristics"
+        }
+      ]
+    },
+    {
+      "id": "tc-4",
+      "prompt": "squash the last 2 commits, they were already pushed to origin",
+      "input_files": [],
+      "assertions": [
+        {
+          "type": "pattern",
+          "value": "force.push|force-with-lease|already pushed",
+          "description": "Handles force push scenario"
+        },
+        {
+          "type": "pattern",
+          "value": "warn|caution|confirm|careful",
+          "description": "Warns about force push implications"
+        }
+      ]
+    },
+    {
+      "id": "tc-5",
+      "prompt": "fold this typo fix into the previous commit",
+      "input_files": [],
+      "assertions": [
+        {
+          "type": "contains",
+          "value": "git commit --amend",
+          "description": "Uses amend for fold-in operation"
+        },
+        {
+          "type": "pattern",
+          "value": "Co-Authored-By|co.authored|preserve",
+          "description": "Considers preserving authorship metadata"
+        }
+      ]
+    },
+    {
+      "id": "tc-6",
+      "prompt": "squash 15 commits into one",
+      "input_files": [],
+      "assertions": [
+        {
+          "type": "pattern",
+          "value": "warn|sure|large|many|15 commits",
+          "description": "Warns when N > 10"
+        },
+        {
+          "type": "pattern",
+          "value": "confirm|proceed|are you sure",
+          "description": "Requires explicit confirmation for large squash"
+        }
+      ]
+    }
+  ],
+  "edge_cases": [
+    {
+      "id": "ec-1",
+      "prompt": "squash commits on main branch",
+      "category": "protected_branch",
+      "expected_behavior": "Refuse or strongly warn against squashing on main/master",
+      "assertions": [
+        {
+          "type": "pattern",
+          "value": "main|master|refuse|dangerous|protected|don't|shouldn't",
+          "description": "Warns against squashing on protected branches"
+        }
+      ]
+    },
+    {
+      "id": "ec-2",
+      "prompt": "squash",
+      "category": "minimal_input",
+      "expected_behavior": "Determine mode automatically: check for staged changes, show recent commits",
+      "assertions": [
+        {
+          "type": "pattern",
+          "value": "git log|git status|staged",
+          "description": "Inspects repo state to determine squash mode"
+        }
+      ]
+    },
+    {
+      "id": "ec-3",
+      "prompt": "squash the last 100 commits",
+      "category": "extreme_input",
+      "expected_behavior": "Warn that 100 commits is very large and confirm before proceeding",
+      "assertions": [
+        {
+          "type": "pattern",
+          "value": "warn|sure|100|large|many",
+          "description": "Warns about extremely large squash operation"
+        }
+      ]
+    },
+    {
+      "id": "ec-4",
+      "prompt": "squash commits across a merge boundary",
+      "category": "merge_boundary",
+      "expected_behavior": "Warn about squashing past merge commits",
+      "assertions": [
+        {
+          "type": "pattern",
+          "value": "merge|boundary|warning|careful",
+          "description": "Detects and warns about merge commit boundary"
+        }
+      ]
+    },
+    {
+      "id": "ec-5",
+      "prompt": "squash the last 3 commits but keep the individual messages as bullet points",
+      "category": "custom_message",
+      "expected_behavior": "Compose commit message with bullet points from individual commits",
+      "assertions": [
+        {
+          "type": "pattern",
+          "value": "bullet|list|message|combine",
+          "description": "Handles custom message formatting request"
+        }
+      ]
+    }
+  ]
+}

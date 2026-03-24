@@ -4,12 +4,30 @@ description: |
   Squash the last N git commits into one, or amend the last commit with staged changes.
   Use when the user says "squash", "amend", "merge commits", "combine commits", "fold into
   previous commit", "that commit was trivial", or invokes /squash. Also trigger when the user
-  says "clean up the commits", "too many small commits", or "squash before pushing".
+  says "clean up the commits", "too many small commits", "squash before pushing",
+  "collapse commits", "condense commits", or "compress commit history".
+  Trigger on the slash commands /squash, /squash N, and /squash amend.
+  Also trigger for "condense my history", "flatten commits", "tidy up commits",
+  "consolidate commits", "roll up commits", and "compact the commit log".
 ---
 
 # Git Squash
 
-Squash recent commits into a clean history. Two modes:
+Squash recent commits into a clean history. Do not use for regular commits, pushes, reverts, stash, cherry-pick, branching, or code review — those are out of scope.
+
+Requires git CLI (any version supporting `reset --soft` and `commit --amend`). Depends on a valid git repository being present. This skill is scoped to git history rewriting via squash and amend only.
+
+Input: user request to squash/amend commits, optionally with count N. Output: modified git history with fewer commits plus a confirmation message.
+
+This skill is not idempotent — running twice doubles the effect because each invocation rewrites history. It is not safe to re-run without checking results first.
+
+If the squash fails (e.g., not in a git repo, no commits to squash, conflicts), the skill reports the error and stops gracefully. If commits were already pushed, it warns and requires confirmation before force push. If on main/master with upstream, the skill refuses unless explicitly overridden — when this happens, suggest using a feature branch instead.
+
+For interactive rebase workflows beyond simple squash, suggest using `git rebase` documentation. For assigning staged hunks to the correct ancestor commit, suggest git-absorb instead. This is complementary to git-absorb and works with conventional commit workflows.
+
+Compatible with git version >= 2.0. Works with any git hosting provider (GitHub, GitLab, Bitbucket). The `git-squash` namespace is scoped to this skill's slash commands only.
+
+Two modes:
 
 ## Mode 1: Amend (fold into previous commit)
 
