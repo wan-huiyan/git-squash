@@ -34,6 +34,17 @@ mkdir -p .cursor/rules
 # Create .cursor/rules/git-squash.mdc with SKILL.md content + alwaysApply: true
 ```
 
+## Optional: Auto-hint after every commit
+
+Add a Claude Code hook so you get automatic squash suggestions after every `git commit`. See [SKILL.md](SKILL.md#suggested-hook-auto-detect-after-every-commit) for the full setup (hook config + shell script).
+
+**What it looks like:**
+```
+Claude: ✓ Committed "fix typo in README"
+        Squash hint: commit 'fix typo in README' scores 85/100
+        (trivial fix, tiny diff, 1 file). Consider /squash.
+```
+
 ## Three Modes
 
 | Mode | Trigger | What happens |
