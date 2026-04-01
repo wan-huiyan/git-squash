@@ -484,6 +484,65 @@
           "description": "Reports that there are no commits to squash"
         }
       ]
+    },
+    {
+      "id": "ec-10",
+      "prompt": "/squash abc",
+      "category": "malformed_input",
+      "expected_behavior": "Report that N must be a number and show usage",
+      "assertions": [
+        {
+          "type": "pattern",
+          "value": "number|numeric|invalid|usage|expected",
+          "description": "Reports malformed input and shows correct usage"
+        }
+      ]
+    },
+    {
+      "id": "ec-11",
+      "prompt": "/squash 5",
+      "category": "missing_deps",
+      "expected_behavior": "Detect missing git CLI and report error",
+      "setup": "Environment where git is not installed or not in PATH",
+      "assertions": [
+        {
+          "type": "pattern",
+          "value": "git.*not found|not installed|not in PATH|install git",
+          "description": "Reports that git dependency is missing"
+        }
+      ]
+    },
+    {
+      "id": "ec-12",
+      "prompt": "squash 500 commits into one",
+      "category": "scale_extreme",
+      "expected_behavior": "Strongly warn about extreme scale, suggest batching",
+      "assertions": [
+        {
+          "type": "pattern",
+          "value": "500|extreme|batch|smaller|very large|too many",
+          "description": "Warns about extreme scale and suggests batching"
+        },
+        {
+          "type": "pattern",
+          "value": "confirm|proceed|are you sure",
+          "description": "Requires explicit confirmation for extreme operations"
+        }
+      ]
+    },
+    {
+      "id": "ec-13",
+      "prompt": "/squash 3",
+      "category": "invalid_path",
+      "expected_behavior": "Handle case where git operations fail due to corrupt or inaccessible repo",
+      "setup": "Git directory exists but .git/HEAD is corrupt or unreadable",
+      "assertions": [
+        {
+          "type": "pattern",
+          "value": "corrupt|error|cannot read|failed|broken|repair",
+          "description": "Reports git repository access error gracefully"
+        }
+      ]
     }
   ],
   "scoring_tests": [
