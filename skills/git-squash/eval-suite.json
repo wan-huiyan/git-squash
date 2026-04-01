@@ -633,6 +633,22 @@
       "expected_max_score": 30,
       "expected_signals": [],
       "description": "Large meaningful commit should score very low across all categories"
+    },
+    {
+      "id": "score-13",
+      "commit_message": "fixed the previous commit's broken import",
+      "expected_min_score": 60,
+      "expected_signals": ["fix-previous-commit"],
+      "description": "Fix-previous-commit pattern should score 80 from message signal"
+    },
+    {
+      "id": "score-14",
+      "commit_message": "update config",
+      "diff_lines": 7,
+      "files_changed": 1,
+      "expected_min_score": 30,
+      "expected_signals": ["small diff", "single file"],
+      "description": "Small diff (<=10 lines) should score +20 and single file +15"
     }
   ],
   "diff_signal_tests": [
@@ -675,6 +691,22 @@
       "expected_signal": "import-only",
       "expected_score_contribution": 50,
       "detection_method": "All changed lines match import/require patterns"
+    },
+    {
+      "id": "diff-6",
+      "description": "Small diff (<=10 lines, >3 lines) should score +20",
+      "setup": "Commit with 7 insertions and 2 deletions",
+      "expected_signal": "small diff",
+      "expected_score_contribution": 20,
+      "detection_method": "Parse git show --stat, total insertions+deletions <= 10 and > 3"
+    },
+    {
+      "id": "diff-7",
+      "description": "Single file touched should score +15",
+      "setup": "Commit that modifies exactly one file",
+      "expected_signal": "single file",
+      "expected_score_contribution": 15,
+      "detection_method": "Only 1 file in git show --name-only output"
     }
   ],
   "context_signal_tests": [
