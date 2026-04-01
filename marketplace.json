@@ -5,6 +5,6 @@
     "name": "git-squash",
     "source": ".",
     "description": "Smart git commit squashing with auto-detection of trivial commits",
-    "version": "1.0.0"
+    "version": "1.2.0"
   }]
 }

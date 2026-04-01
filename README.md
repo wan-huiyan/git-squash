@@ -25,7 +25,7 @@ Claude: ✓ Squashed 3 commits into 1. New history:
 
 ### Claude Code
 ```bash
-git clone https://github.com/wan-huiyan/git-squash.git ~/.claude/skills/git-squash
+claude install-skill https://github.com/wan-huiyan/git-squash
 ```
 
 ### Cursor
@@ -36,7 +36,7 @@ mkdir -p .cursor/rules
 
 ## Optional: Auto-hint after every commit
 
-Add a Claude Code hook so you get automatic squash suggestions after every `git commit`. See [SKILL.md](SKILL.md#suggested-hook-auto-detect-after-every-commit) for the full setup (hook config + shell script).
+Add a Claude Code hook so you get automatic squash suggestions after every `git commit`. See [references/squash-hint-hook.md](references/squash-hint-hook.md) for the full setup (hook config + shell script).
 
 **What it looks like:**
 ```
@@ -135,12 +135,13 @@ Scores are additive (capped at 100). A commit matching signals from 2+ categorie
 
 | Version | Changes |
 |---------|---------|
+| 1.2.0 | Expand eval suite to ~90 test cases (scoring, diff signals, context signals, error handling), improve schliff score 80.1 → 84.8 (edges 100, clarity 100), extract references/ directory |
 | 1.1.0 | Enrich trigger description, add eval suite, add composability metadata (schliff score: 63.1 → 80.6) |
 | 1.0.0 | Initial release: 3 modes (amend, squash N, auto-detect), 0-100 scoring with 3 signal categories, safety checks |
 
 ## Acknowledgements
 
-Trigger accuracy and eval suite improved using [schliff](https://github.com/Zandereins/schliff) — an autonomous skill scoring and improvement framework (composite score: 63.1 → 80.6).
+Trigger accuracy and eval suite improved using [schliff](https://github.com/Zandereins/schliff) — an autonomous skill scoring and improvement framework (composite score: 63.1 → 84.8).
 
 ## License
 
