@@ -9,25 +9,37 @@ description: |
   Trigger on the slash commands /squash, /squash N, and /squash amend.
   Also trigger for "condense my history", "flatten commits", "tidy up commits",
   "consolidate commits", "roll up commits", and "compact the commit log".
+  Trigger for "interactive rebase to clean up commits", "merge my last two commits into
+  one with a better message", "fixups", and "already pushed" squash scenarios.
+  Trigger for "I made a typo fix", "commits are all related", "merge them together",
+  "into a single commit", and similar phrasing about combining commits together.
 ---
 
 # Git Squash
 
-Squash recent commits into a clean history. Do not use for regular commits, pushes, reverts, stash, cherry-pick, branching, or code review — those are out of scope.
+USE this skill when the user wants to squash, combine, amend, fold, collapse, or condense git commits. This includes `/squash`, `/squash N`, `/squash amend`, and natural-language equivalents like "clean up commits" or "too many small commits."
 
-Requires git CLI (any version supporting `reset --soft` and `commit --amend`). Depends on a valid git repository being present. This skill is scoped to git history rewriting via squash and amend only.
+## Do NOT use for
+
+Do NOT use for regular commits, git push, git pull, git fetch, reverts, stash, cherry-pick, branch creation, rebasing without squash context, code review, git tagging, merge conflict resolution, git hooks setup, or merging branches. Do NOT trigger for "fixup! ..." commit messages, "create a new feature branch", "revert the last commit", "stash my current changes", "show me the git log", or "tag this release".
+
+## Prerequisites
+
+Requires git CLI >= 2.0 (must support `reset --soft` and `commit --amend`). Depends on a valid git repository being present. Works with any git hosting provider (GitHub, GitLab, Bitbucket).
+
+To install this skill in Claude Code:
+
+```bash
+claude install-skill https://github.com/wan-huiyan/git-squash
+```
+
+## Scope and Safety
 
 Input: user request to squash/amend commits, optionally with count N. Output: modified git history with fewer commits plus a confirmation message.
 
 This skill is not idempotent — running twice doubles the effect because each invocation rewrites history. It is not safe to re-run without checking results first.
 
-If the squash fails (e.g., not in a git repo, no commits to squash, conflicts), the skill reports the error and stops gracefully. If commits were already pushed, it warns and requires confirmation before force push. If on main/master with upstream, the skill refuses unless explicitly overridden — when this happens, suggest using a feature branch instead.
-
-For interactive rebase workflows beyond simple squash, suggest using `git rebase` documentation. For assigning staged hunks to the correct ancestor commit, suggest git-absorb instead. This is complementary to git-absorb and works with conventional commit workflows.
-
-Compatible with git version >= 2.0. Works with any git hosting provider (GitHub, GitLab, Bitbucket). The `git-squash` namespace is scoped to this skill's slash commands only.
-
-Two modes:
+For interactive rebase workflows beyond simple squash, suggest `git rebase -i` documentation. For assigning staged hunks to the correct ancestor commit, suggest git-absorb instead. The `git-squash` namespace is scoped to this skill's slash commands only.
 
 ## Mode 1: Amend (fold into previous commit)
 
@@ -80,101 +92,12 @@ When the user wants to combine the last N commits into one.
 When the user just says `/squash` with no arguments and there are no staged changes:
 
 1. Show `git log --oneline -10`
-2. Run the squash detection heuristics (see below) on each commit
+2. Run the squash detection heuristics (see [references/scoring-heuristics.md](references/scoring-heuristics.md)) on each commit
 3. Group adjacent squashable commits
 4. Suggest: "These N commits look squashable. Combine them?"
 5. If the user confirms, proceed with Mode 2
 
-### Squash Detection Heuristics
-
-Score each commit 0-100. Commits scoring **60+** are "likely squashable." Combine signals
-from multiple categories for higher confidence.
-
-#### Category 1: Message signals (check first — cheapest)
-
-| Signal | Score | Pattern |
-|--------|-------|---------|
-| Explicit fixup marker | **+90** | `^(fixup\|squash\|amend)!\s` |
-| WIP | **+80** | `^wip\b` or `^wip:` |
-| Oops/forgot family | **+80** | `^(oops\|whoops\|forgot\|missed\|doh\|argh)\b` |
-| Fix-previous-commit | **+80** | `fix(ed\|es\|ing)?\s+(the\s+)?(last\|previous\|prior)\s+commit` |
-| Trivial-fix vocabulary | **+60** | `^(fix\s+)?(typo\|spelling\|whitespace\|indent(ation)?\|formatting\|lint)\b` |
-| Minor/cleanup family | **+50** | `^(minor\|small\|tiny\|trivial\|nit\|cleanup\|clean[\s-]?up\|polish)\b` |
-| Address review | **+50** | `address(ed\|es\|ing)?\s+(code[\s-]?)?review` |
-| Single word message | **+40** | 1 word only (excluding conventional commit prefix) |
-| Very short message | **+30** | Subject < 10 characters |
-| Temp/tmp | **+70** | `^(temp\|tmp)\b` |
-
-#### Category 2: Diff signals (run `git show --stat` and `git show --diff-filter`)
-
-| Signal | Score | How to detect |
-|--------|-------|---------------|
-| Whitespace-only | **+90** | `git show <sha> --ignore-all-space` produces empty diff |
-| Rename-only | **+60** | `git show <sha> --diff-filter=R --name-only` matches all changes |
-| Very small diff (≤3 lines) | **+40** | Parse `git show --stat` — total insertions+deletions ≤ 3 |
-| Small diff (≤10 lines) | **+20** | Total insertions+deletions ≤ 10 |
-| Comment-only changes | **+50** | All changed lines are comments (`//`, `#`, `/*`, `<!--`) |
-| Import-only changes | **+50** | All changed lines are imports/requires |
-| Single file touched | **+15** | Only 1 file in `--name-only` |
-
-#### Category 3: Contextual signals (compare with adjacent commits)
-
-| Signal | Score | How to detect |
-|--------|-------|---------------|
-| Same files as previous commit | **+40** | `git show --name-only <sha>` overlaps with previous commit |
-| Same author, < 60 sec apart | **+50** | Compare author dates |
-| Same author, < 15 sec apart | **+70** | Almost certainly a fixup |
-| Same author + same files + < 5 min | **+60** | Combine authorship, file set, and timing |
-| Burst: 3+ tiny commits in 10 min | **+30** per commit | Same author, each ≤ 10 lines |
-
-#### Scoring rules
-
-- **Score 80+**: Almost certainly squashable → suggest without hesitation
-- **Score 60-79**: Likely squashable → suggest with brief explanation
-- **Score 40-59**: Possibly squashable → mention but don't push
-- **Score < 40**: Probably intentional → don't suggest
-
-Combine scores additively but cap at 100. A commit matching signals from 2+ categories
-is almost always squashable.
-
-#### Squashable message regex (for quick scan)
-
-```
-SQUASHABLE_PATTERNS = [
-  /^(fixup|squash|amend)!\s/i,
-  /^wip\b/i,
-  /^(oops|whoops|forgot|missed|doh|argh)\b/i,
-  /^(fix\s+)?(typo|typos|spelling|whitespace|indent(ation)?|formatting|lint(ing)?)\b/i,
-  /^(minor|small|tiny|trivial|nit|cleanup|clean[\s-]?up|polish)\b/i,
-  /fix(ed|es|ing)?\s+(the\s+)?(last|previous|prior|earlier)\s+commit/i,
-  /address(ed|es|ing)?\s+(code[\s-]?)?review/i,
-  /^(temp|tmp)\b/i,
-  /^[.!?]+$/,
-]
-```
-
-### Auto-detect procedure
-
-```bash
-# For each of the last 10 commits:
-for sha in $(git log --format=%H -10); do
-  score=0
-
-  # 1. Message check (cheapest)
-  msg=$(git log --format=%s -1 $sha)
-  # Match against SQUASHABLE_PATTERNS → add score
-
-  # 2. Diff size check
-  stat=$(git show --stat --format="" $sha | tail -1)
-  # Parse "N insertions, M deletions" → add score if small
-
-  # 3. Context check (compare with previous commit)
-  prev=$(git log --format=%H -1 --skip=1 $sha)
-  # Compare author, timestamp, file sets → add score
-
-  # Report: "Commit abc1234 'fix typo' — score 85 (message: +60, diff: +15, timing: +10)"
-done
-```
+Score each commit 0-100. Commits scoring **60+** are "likely squashable." Signals span three categories: message patterns (cheapest), diff analysis, and contextual signals (author timing, file overlap). Full scoring tables and detection procedures are in [references/scoring-heuristics.md](references/scoring-heuristics.md).
 
 ## Force Push Handling
 
@@ -183,6 +106,21 @@ After squashing commits that were already pushed:
 - If on a feature branch: `git push --force-with-lease` (safer than `--force`)
 - If on main/master: REFUSE unless the user explicitly says "force push to main"
 - Always use `--force-with-lease` over `--force` to avoid overwriting others' work
+
+## Edge Cases and Error Handling
+
+| Scenario | Behavior |
+|----------|----------|
+| Not a git repository | Report error: "This directory is not a git repository." Stop. |
+| No commits in repository | Report error: "No commits to squash." Stop. |
+| N exceeds total commits | Report: "Only M commits exist." Offer to squash all M instead. |
+| Squash range includes merge commit | Warn: "This range crosses a merge boundary." Ask to confirm or reduce N. |
+| N > 10 | Warn about large operation, require explicit confirmation. |
+| N > 50 | Strongly warn, suggest doing it in smaller batches. |
+| Malformed input (non-numeric N) | Report: "Expected a number. Usage: /squash N" |
+| Missing git CLI | Report: "git is not installed or not in PATH." Stop. |
+| Protected branch (main/master) | REFUSE unless user explicitly overrides. Suggest feature branch. |
+| Dirty working tree with conflicts | Report conflicts, ask user to resolve before squashing. |
 
 ## Examples
 
@@ -200,75 +138,9 @@ User: "/squash" (with staged changes)
 → Mode 1: amend with staged changes
 ```
 
-## Suggested Hook: Auto-detect after every commit
+## Hook: Auto-detect after every commit
 
-Add this to your `~/.claude/settings.json` (or `.claude/settings.json` for project-level) to get
-automatic squash hints after every `git commit`:
-
-```json
-{
-  "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/squash-hint.sh",
-            "timeout": 5,
-            "statusMessage": "Checking commit..."
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-Then save this script to `~/.claude/hooks/squash-hint.sh` and `chmod +x` it:
-
-```bash
-#!/bin/bash
-# Post-commit squash hint — scores the last commit for squashability
-INPUT=$(cat)
-CMD=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
-
-# Only fire on git commit commands
-echo "$CMD" | grep -qE '^\s*git\s+commit\b' || exit 0
-git rev-parse --git-dir > /dev/null 2>&1 || exit 0
-
-MSG=$(git log -1 --format=%s 2>/dev/null)
-LINES=$(git show --stat --format="" HEAD 2>/dev/null | tail -1 | grep -oE '[0-9]+ insertion|[0-9]+ deletion' | grep -oE '[0-9]+' | paste -sd+ - | bc 2>/dev/null || echo "999")
-FILES=$(git show --name-only --format="" HEAD 2>/dev/null | wc -l | tr -d ' ')
-
-SCORE=0; REASONS=""
-
-# Message signals
-if echo "$MSG" | grep -qiE '^(fixup|squash|amend)!\s'; then SCORE=$((SCORE+90)); REASONS="fixup marker"
-elif echo "$MSG" | grep -qiE '^wip\b'; then SCORE=$((SCORE+80)); REASONS="WIP"
-elif echo "$MSG" | grep -qiE '^(oops|whoops|forgot|missed)\b'; then SCORE=$((SCORE+80)); REASONS="oops/forgot"
-elif echo "$MSG" | grep -qiE '^(fix\s+)?(typo|spelling|whitespace|indent|formatting|lint)\b'; then SCORE=$((SCORE+60)); REASONS="trivial fix"
-elif echo "$MSG" | grep -qiE '^(minor|small|tiny|trivial|nit|cleanup|polish)\b'; then SCORE=$((SCORE+50)); REASONS="minor/cleanup"
-fi
-
-# Diff signals
-[ "$LINES" -le 3 ] 2>/dev/null && SCORE=$((SCORE+40)) && REASONS="${REASONS:+$REASONS, }tiny diff"
-[ "$LINES" -le 10 ] 2>/dev/null && [ "$LINES" -gt 3 ] 2>/dev/null && SCORE=$((SCORE+20)) && REASONS="${REASONS:+$REASONS, }small diff"
-[ "$FILES" -le 1 ] 2>/dev/null && SCORE=$((SCORE+15)) && REASONS="${REASONS:+$REASONS, }1 file"
-
-[ "$SCORE" -gt 100 ] && SCORE=100
-
-if [ "$SCORE" -ge 60 ]; then
-  echo "{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"Squash hint: commit '${MSG}' scores ${SCORE}/100 (${REASONS}). Consider /squash to fold it into the previous commit.\"}}"
-fi
-```
-
-**What happens:** After every `git commit`, the hook scores the commit. If it scores 60+
-(likely trivial), it injects a hint into the conversation suggesting `/squash`. The hook is
-passive — it never modifies history, only suggests.
-
-**Merge note:** If you already have `PostToolUse` hooks, add the Bash matcher entry to the
-existing array — don't replace it.
+A PostToolUse hook can automatically score commits and suggest `/squash` when appropriate. See [references/squash-hint-hook.md](references/squash-hint-hook.md) for installation instructions and the full hook script.
 
 ## Related Tools
 
