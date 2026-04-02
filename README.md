@@ -136,12 +136,12 @@ Scores are additive (capped at 100). A commit matching signals from 2+ categorie
 
 | Version | Changes |
 |---------|---------|
-| 1.1.0 | Enrich trigger description, add eval suite, add composability metadata (schliff score: 63.1 → 80.6) |
+| 1.1.0 | Enrich trigger description, add eval suite, add composability metadata |
 | 1.0.0 | Initial release: 3 modes (amend, squash N, auto-detect), 0-100 scoring with 3 signal categories, safety checks |
 
 ## Acknowledgements
 
-Trigger accuracy and eval suite improved using [schliff](https://github.com/Zandereins/schliff) — an autonomous skill scoring and improvement framework (composite score: 63.1 → 80.6).
+Trigger accuracy and eval suite improved using [schliff](https://github.com/Zandereins/schliff) — an autonomous skill scoring and improvement framework.
 
 ## License
 
