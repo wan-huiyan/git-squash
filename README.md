@@ -1,7 +1,7 @@
 # Git Squash
 [![GitHub release](https://img.shields.io/github/v/release/wan-huiyan/git-squash)](https://github.com/wan-huiyan/git-squash/releases) [![Claude Code](https://img.shields.io/badge/Claude_Code-skill-orange)](https://claude.com/claude-code) [![license](https://img.shields.io/github/license/wan-huiyan/git-squash)](LICENSE) [![last commit](https://img.shields.io/github/last-commit/wan-huiyan/git-squash)](https://github.com/wan-huiyan/git-squash/commits)
 
-A [Claude Code](https://claude.com/claude-code) skill that intelligently squashes git commits — with auto-detection of trivial commits via message patterns, diff size, and timing heuristics.
+Noisy commit history buries meaningful changes and makes PRs hard to review. This skill auto-detects trivial commits — using message patterns, diff size, and timing heuristics — and squashes them with a single command.
 
 ## Quick Start
 
