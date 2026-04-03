@@ -113,6 +113,11 @@ Scores are additive (capped at 100). A commit matching signals from 2+ categorie
 - **Does not handle interactive rebase.** For complex history rewriting (reordering, splitting), use `git rebase -i` directly.
 - **Timing signals require local git history.** Shallow clones may not have accurate timestamps.
 
+## Requirements
+
+- Claude Code v1.0+
+- git 2.x+
+
 ## Related Tools
 
 | Tool | Approach | Best for |
